@@ -1,11 +1,16 @@
-# OpenAI SDK / Agents SDK Smart Agent
+# OpenAI Agents SDK Smart Agent
 
-> Tech Stack: OpenAI Agents SDK (Python) + Tool Calling + Memory Management
+> Tech Stack: OpenAI Agents SDK + Multi-backend LLM + Tool Calling + Session Memory + FastAPI Service
 
 ## 1. Goal
-- Build an extensible ReAct Agent based on the Agents SDK
-- Support function calling, multi-turn memory, and context routing
-- Provide multiple LLM backends: OpenAI / DashScope / local vLLM
+
+Build an extensible ReAct-style Agent with real-world engineering patterns:
+
+- Multi-backend LLM: OpenAI / DashScope (Qwen3) / Ollama / vLLM
+- Tool calling: calculator, RAG KB search, weather, web search
+- Session memory: short-term conversation history + multi-session store
+- HTTP API: FastAPI service with session isolation
+- Production-ready: safe eval, graceful errors, extensible tool registry
 
 ## 2. Project Structure
 
@@ -13,23 +18,23 @@
 agent_sdk/
 ├── src/
 │   ├── __init__.py
-│   ├── config.py            # Config: API keys, models, tool list
-│   ├── llm_backend.py       # Multi-backend LLM wrapper (OpenAI/DashScope/Ollama)
-│   ├── agent.py             # Agent main class
+│   ├── config.py
+│   ├── llm_backend.py
+│   ├── agent.py
+│   ├── prompts/
+│   │   └── system_prompt.txt
 │   ├── tools/
 │   │   ├── __init__.py
-│   │   ├── search_kb.py     # Call RAG knowledge base
-│   │   ├── calculator.py    # Calculator
-│   │   ├── weather.py       # Weather query (demo)
-│   │   └── web_search.py    # Web search (demo)
-│   ├── memory/
-│   │   ├── __init__.py
-│   │   └── session_memory.py  # Session-level memory
-│   └── prompts/
-│       └── system_prompt.txt
+│   │   ├── calculator.py
+│   │   ├── search_kb.py
+│   │   ├── weather.py
+│   │   └── web_search.py
+│   └── memory/
+│       ├── __init__.py
+│       └── session_memory.py
 ├── scripts/
-│   ├── run_agent.py         # CLI interaction
-│   └── run_server.py        # FastAPI service entry (optional)
+│   ├── run_agent.py
+│   └── run_server.py
 ├── tests/
 │   └── test_tools.py
 ├── requirements.txt
@@ -39,7 +44,7 @@ agent_sdk/
 
 ## 3. Quick Start
 
-### 3.1 Install Dependencies
+### 3.1 Install
 
 ```bash
 cd ai-toolkit/agent_sdk
@@ -53,43 +58,69 @@ pip install -r requirements.txt
 Copy `.env.example` to `.env`:
 
 ```env
-# Use official OpenAI
+# OpenAI
+LLM_PROVIDER=openai
 OPENAI_API_KEY=sk-xxxx
-AGENT_MODEL=gpt-4o-mini
+OPENAI_MODEL=gpt-4o-mini
 
-# Or Alibaba DashScope (Qwen3)
+# Or DashScope Qwen3
 # LLM_PROVIDER=dashscope
 # DASHSCOPE_API_KEY=sk-xxxx
-# DASHSCOPE_BASE_URL=https://dashscope.aliyuncs.com/compatible-mode/v1
-# AGENT_MODEL=qwen3-30b-a3b
+# DASHSCOPE_MODEL=qwen3-30b-a3b
 
-# Or local vLLM/Ollama
+# Or local Ollama / vLLM
 # LLM_PROVIDER=ollama
-# LLM_BASE_URL=http://localhost:11434/v1
-# AGENT_MODEL=qwen3:14b
+# OLLAMA_BASE_URL=http://localhost:11434/v1
+# OLLAMA_MODEL=qwen3:14b
 ```
 
-### 3.3 Run CLI Agent
+### 3.3 Run CLI
 
 ```bash
 python scripts/run_agent.py
 ```
 
+### 3.4 Run FastAPI Server
+
+```bash
+python scripts/run_server.py
+```
+
+Example request:
+
+```bash
+curl -X POST http://localhost:8000/chat \
+  -H "Content-Type: application/json" \
+  -d '{"message": "What is 3.5 * 12?"}'
+```
+
 ## 4. Key Design
 
-- **ReAct Loop**: Agent follows `thought → action → observation → final_answer`
-- **Tool Registration**: All tool functions register via decorators with automatic schema generation
-- **Memory**: Session-level short-term memory + extensible persistent memory interface
-- **Safety**: Validate parameters before tool execution and return friendly errors on exceptions
-- **Fallback**: Return a default reply and log errors when the LLM is unavailable
+- **LLMBackend**: Centralizes provider-specific API key, base URL, and model selection.
+- **Tool Registry**: Each tool is a decorated function; schemas are auto-generated from type hints and docstrings.
+- **SessionMemory**: Keeps N most recent turns per session; avoids unbounded context growth.
+- **RAG Integration**: `search_knowledge_base` dynamically imports `rag_kb` so the Agent can answer from your indexed documents.
+- **Safety**: Calculator uses an allow-list and `{"__builtins__": {}}` to prevent code injection.
 
 ## 5. Extending Tools
 
-Add new Python functions in `src/tools/` with a `@tool` decorator to auto-register. The Agent generates tool schemas from docstrings and type annotations.
+Add a new file in `src/tools/`:
+
+```python
+from agents import function_tool
+
+@function_tool
+def my_tool(param: str) -> str:
+    """Describe what this tool does."""
+    return f"Result for {param}"
+```
+
+Then import it in `src/tools/__init__.py` and pass it to `SmartAgent`.
 
 ## 6. Production Notes
 
-- Agents are not suitable for infinite long tasks; always set `max_steps` and timeout
-- Tool failures should be gracefully handled; avoid exposing raw stack traces to users
-- Log full conversation traces for review and system prompt optimization
-- Add human confirmation nodes for sensitive actions (e.g., placing orders, deleting data)
+- Set `max_steps` and request timeout to prevent runaway agents.
+- Replace weather/web_search demo tools with real API integrations.
+- Add persistent memory (Redis/Postgres) for cross-session continuity.
+- Log conversation traces and tool outputs for debugging and audit.
+- Require explicit user confirmation for destructive or costly actions.
