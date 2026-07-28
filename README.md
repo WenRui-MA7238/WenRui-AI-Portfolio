@@ -16,7 +16,7 @@ Generative AI Engineer | Machine Learning Engineer | Computer Vision Engineer
 
 ## Tech Stack
 
-Python â€?PyTorch â€?TensorFlow â€?OpenCV â€?Hugging Face â€?LangChain â€?Git â€?Linux
+Python â€¢ PyTorch â€¢ TensorFlow â€¢ OpenCV â€¢ Hugging Face â€¢ LangChain â€¢ Git â€¢ Linux
 
 Currently building AI applications for Generative AI, RAG, and Computer Vision.
 
@@ -47,7 +47,7 @@ cp .env.example .env
 ### Integrated Workflow
 
 ```text
-Image/PDF â†?Multimodal extraction â†?RAG data/ â†?FAISS index â†?Agent Q&A
+Image/PDF â†’ Multimodal extraction â†’ RAG data/ â†’ FAISS index â†’ Agent Q&A
 ```
 
 This project demonstrates end-to-end AI application engineering: retrieval augmentation, agent tool use, and multimodal understanding.
