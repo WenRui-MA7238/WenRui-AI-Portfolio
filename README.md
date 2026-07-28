@@ -41,7 +41,7 @@ cp .env.example .env
 # Edit .env with your API keys, then install dependencies per component README
 ```
 
-- [中文使用说明](./ai-toolkit/使用说明.md)
+- [中文使用说明](./ai-toolkit/README_CN.md)
 - [English Guide](./ai-toolkit/README_EN.md)
 
 ### Integrated Workflow
