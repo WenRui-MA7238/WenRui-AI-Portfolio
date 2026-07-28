@@ -16,7 +16,7 @@ Generative AI Engineer | Machine Learning Engineer | Computer Vision Engineer
 
 ## Tech Stack
 
-Python â€¢ PyTorch â€¢ TensorFlow â€¢ OpenCV â€¢ Hugging Face â€¢ LangChain â€¢ Git â€¢ Linux
+Python â€?PyTorch â€?TensorFlow â€?OpenCV â€?Hugging Face â€?LangChain â€?Git â€?Linux
 
 Currently building AI applications for Generative AI, RAG, and Computer Vision.
 
@@ -35,8 +35,8 @@ This repository contains a runnable AI engineering toolkit with three integrated
 ### Quick Start
 
 ```bash
-git clone https://github.com/WenRui-MA7238/WenRui-AI-Proftolio.git
-cd WenRui-AI-Proftolio/ai-toolkit
+git clone https://github.com/WenRui-MA7238/WenRui-AI-Portfolio.git
+cd WenRui-AI-Portfolio/ai-toolkit
 cp .env.example .env
 # Edit .env with your API keys, then install dependencies per component README
 ```
@@ -47,7 +47,7 @@ cp .env.example .env
 ### Integrated Workflow
 
 ```text
-Image/PDF â†’ Multimodal extraction â†’ RAG data/ â†’ FAISS index â†’ Agent Q&A
+Image/PDF â†?Multimodal extraction â†?RAG data/ â†?FAISS index â†?Agent Q&A
 ```
 
 This project demonstrates end-to-end AI application engineering: retrieval augmentation, agent tool use, and multimodal understanding.
