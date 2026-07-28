@@ -1,0 +1,12 @@
+langchain>=0.3.0
+langchain-community>=0.3.0
+langchain-openai>=0.2.0
+faiss-cpu>=1.8.0
+openai>=1.40.0
+python-dotenv>=1.0.0
+pypdf>=4.0.0
+python-docx>=1.1.0
+sentence-transformers>=3.0.0
+# 可选：如果使用本地嵌入模型，推荐 bge-m3 / nomic-embed-text
+# transformers>=4.44.0
+# torch>=2.4.0
